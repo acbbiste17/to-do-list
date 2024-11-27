@@ -46,7 +46,7 @@ jobs:
 
       # Build Docker images using docker-compose
       - name: Build Docker Images
-        run: docker-compose build
+        run: docker compose build
 
       # Push Docker images to Docker Hub
       - name: Push Docker Images

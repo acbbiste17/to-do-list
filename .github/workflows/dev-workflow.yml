@@ -50,4 +50,4 @@ jobs:
 
       # Push Docker images to Docker Hub
       - name: Push Docker Images
-        run: docker-compose push
+        run: docker compose push

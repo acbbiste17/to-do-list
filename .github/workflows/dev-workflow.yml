@@ -1,0 +1,36 @@
+name: CI for Dev Branch
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Install dependencies and test Backend
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: |
+          npm install
+          npm test
+
+      # Step 3: Install dependencies and test Frontend
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: |
+          npm install
+          npm test
+
+      # Step 4: Merge dev into main (if tests are successful)
+      - name: Merge dev into main
+        uses: devops-infra/action-merge-branch@v3
+        with:
+          target_branch: main
+          github_token: ${{ secrets.GITHUB_TOKEN }}

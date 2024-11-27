@@ -1,4 +1,4 @@
-name: CI/CD for Main Branch
+name: CD - Dev to Main
 
 on:
   push:
@@ -6,45 +6,48 @@ on:
       - main
 
 jobs:
-  build-test-and-deploy:
+  build-test-deploy:
+    name: Build, Test, and Deploy
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Install dependencies and test Backend
-      - name: Install Backend Dependencies
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install backend dependencies
         working-directory: ./backend
-        run: |
-          npm install
-          npm test
+        run: npm install
 
-      # Step 3: Install dependencies and test Frontend
-      - name: Install Frontend Dependencies
+      - name: Install frontend dependencies
         working-directory: ./frontend
-        run: |
-          npm install
-          npm test
+        run: npm install
 
-      # Step 4: Build Docker images with docker-compose
-      - name: Build Docker Images
-        run: docker-compose build
+      - name: Run backend tests
+        working-directory: ./backend
+        run: npm test
 
-      # Step 5: Push Docker images to DockerHub
-      - name: Log in to DockerHub
+      - name: Run frontend tests
+        working-directory: ./frontend
+        run: npm test
+
+      - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Push Backend Image
-        run: |
-          docker tag backend-image:latest ${{ secrets.DOCKER_USERNAME }}/backend-image:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/backend-image:latest
+      - name: Set DOCKER_USERNAME environment variable
+        run: echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> $GITHUB_ENV
 
-      - name: Push Frontend Image
+      - name: Build Docker images using docker-compose
         run: |
-          docker tag frontend-image:latest ${{ secrets.DOCKER_USERNAME }}/frontend-image:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/frontend-image:latest
+          docker compose build
+
+      - name: Push Docker images to Docker Hub
+        run: |
+          docker compose push

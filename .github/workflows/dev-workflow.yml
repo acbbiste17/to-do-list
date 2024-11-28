@@ -29,12 +29,25 @@ jobs:
         working-directory: ./frontend
         run: npm install
 
+
+
       - name: Run backend tests
         working-directory: ./backend
         run: npm test
 
       - name: Run frontend tests
         working-directory: ./frontend
+        run: npm test
+
+      - name: Start application with Docker Compose
+        run: docker-compose up -d
+
+      - name: installer e2e tests
+        working-directory: ./e2e-tests
+        run: npm install
+
+      - name: E2E tests
+        working-directory: ./e2e-tests
         run: npm test
 
       - name: Log in to Docker Hub
@@ -49,15 +62,6 @@ jobs:
       # Build Docker images using docker-compose
       - name: Build Docker Images
         run: docker compose build
-
-
-      - name: installer e2e tests
-        working-directory: ./e2e-tests
-        run: npm install
-
-      - name: E2E tests
-        working-directory: ./e2e-tests
-        run: npm test
 
 
       # Push Docker images to Docker Hub

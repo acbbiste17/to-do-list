@@ -39,6 +39,7 @@ jobs:
       - name: Create Pull Request to Merge Dev into Main
         uses: peter-evans/create-pull-request@v5
         with:
+          token: ${{ secrets.TOKEN }}  
           branch: main
           commit-message: "Merge dev into main"
           title: "Merge dev into main"

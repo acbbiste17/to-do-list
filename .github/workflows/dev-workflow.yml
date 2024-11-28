@@ -45,6 +45,11 @@ jobs:
 
       - name: Set DOCKER_USERNAME environment variable
         run: echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> $GITHUB_ENV
+        
+      # Build Docker images using docker-compose
+      - name: Build Docker Images
+        run: docker compose build
+
 
       - name: installer e2e tests
         working-directory: ./e2e-tests
